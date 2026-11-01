@@ -3,75 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O Meu Jogo - Fórum</title>
+  <title>O Meu Jogo - Comunidade</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Inter', sans-serif; } </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } // Um roxo/azul moderno
+          }
+        }
+      }
+    }
+  </script>
+  <style> 
+    body { font-family: 'Inter', sans-serif; }
+    /* Efeito de vidro para os cartões */
+    .glass {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
+<body class="bg-slate-900 text-slate-200 antialiased flex flex-col min-h-screen selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Luzes de fundo decorativas -->
+  <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 pointer-events-none"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
 
   <!-- BARRA DE NAVEGAÇÃO -->
-  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <nav class="border-b border-white/10 sticky top-0 z-50 glass">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
-          <div class="bg-blue-600 p-2 rounded-lg text-white">
-            <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="window.location.reload()">
+          <div class="bg-gradient-to-br from-brand-500 to-purple-600 p-2.5 rounded-xl text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+            <i data-lucide="gamepad-2" class="w-6 h-6"></i>
           </div>
-          <span class="font-bold text-xl tracking-tight">O Meu Jogo</span>
+          <span class="font-extrabold text-2xl tracking-tight text-white">O Meu Jogo</span>
         </div>
-        <div id="nav-user-info" class="text-sm text-gray-600"></div>
+        <div id="nav-user-info" class="text-sm font-medium text-slate-300 flex items-center gap-3"></div>
       </div>
     </div>
   </nav>
 
   <!-- CONTEÚDO PRINCIPAL -->
-  <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
+  <main class="flex-grow max-w-5xl mx-auto px-4 py-12 w-full relative z-10">
     
     <!-- VISTA 1: PÁGINA INICIAL (Deslogado) -->
-    <div id="view-landing" class="text-center py-12">
-      <h1 class="text-5xl font-extrabold text-gray-900 tracking-tight mb-4">Bem-vindo ao Jogo</h1>
-      <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-8">
-        Entra na nossa comunidade para discutir teorias, partilhar ideias e falar sobre o desenvolvimento do jogo.
-      </p>
+    <div id="view-landing" class="grid md:grid-cols-2 gap-12 items-center py-10">
       
-      <!-- Caixa de Login -->
-      <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-md mx-auto text-left">
-        <h2 class="text-xl font-bold mb-4">Entrar ou Criar Conta</h2>
-        <form id="auth-form" class="space-y-4">
+      <!-- Texto à Esquerda -->
+      <div class="space-y-6 text-center md:text-left">
+        <span class="inline-block py-1 px-3 rounded-full bg-brand-500/10 text-brand-400 text-sm font-semibold border border-brand-500/20">
+          Bem-vindo à Comunidade
+        </span>
+        <h1 class="text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+          Discute o futuro do <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Jogo</span>
+        </h1>
+        <p class="text-lg text-slate-400 leading-relaxed max-w-lg mx-auto md:mx-0">
+          Junta-te a outros jogadores para partilhar teorias, sugerir novas funcionalidades e acompanhar o desenvolvimento em tempo real.
+        </p>
+        <div class="flex items-center justify-center md:justify-start gap-4 pt-2 text-sm text-slate-500">
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-400"></i> Discussões ativas</div>
+          <div class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-400"></i> Acesso rápido</div>
+        </div>
+      </div>
+
+      <!-- Caixa de Login à Direita -->
+      <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md mx-auto">
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-white mb-2">Acede à tua conta</h2>
+          <p class="text-sm text-slate-400">Usa o teu email e password para entrar ou criar uma nova conta.</p>
+        </div>
+
+        <form id="auth-form" class="space-y-5">
           <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="email" required class="mt-1 w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">Endereço de Email</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="mail" class="w-5 h-5 text-slate-500"></i>
+              </div>
+              <input type="email" id="email" required placeholder="tu@exemplo.com" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+            </div>
           </div>
+          
           <div>
-            <label class="block text-sm font-medium text-gray-700">Password</label>
-            <input type="password" id="password" required class="mt-1 w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="lock" class="w-5 h-5 text-slate-500"></i>
+              </div>
+              <input type="password" id="password" required placeholder="••••••••" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Mínimo de 6 caracteres.</p>
           </div>
-          <div class="flex gap-3 pt-2">
-            <button type="button" onclick="signIn()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition">Entrar</button>
-            <button type="button" onclick="signUp()" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 font-medium transition">Criar Conta</button>
+
+          <!-- Mensagens de Erro/Sucesso -->
+          <div id="auth-message-container" class="hidden rounded-lg p-3 text-sm flex items-start gap-2">
+            <i id="auth-icon" class="w-5 h-5 shrink-0 mt-0.5"></i>
+            <span id="auth-message"></span>
           </div>
-          <p id="auth-message" class="text-sm mt-2 text-center"></p>
+
+          <div class="flex flex-col gap-3 pt-2">
+            <button type="button" onclick="signIn()" id="btn-login" class="w-full bg-brand-600 text-white px-4 py-3 rounded-xl hover:bg-brand-500 font-semibold transition-all shadow-lg shadow-brand-500/25 flex justify-center items-center gap-2">
+              Entrar na Conta
+            </button>
+            <button type="button" onclick="signUp()" id="btn-signup" class="w-full bg-slate-800 text-slate-300 border border-slate-700 px-4 py-3 rounded-xl hover:bg-slate-700 hover:text-white font-medium transition-all flex justify-center items-center gap-2">
+              Criar Nova Conta
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- VISTA 2: FÓRUM (Logado) -->
-    <div id="view-forum" class="hidden">
-      <div class="flex justify-between items-end mb-6 border-b pb-4">
-        <h2 class="text-3xl font-bold text-gray-900">Discussão da Comunidade</h2>
-        <button onclick="signOut()" class="text-red-500 text-sm hover:underline">Terminar Sessão</button>
+    <div id="view-forum" class="hidden space-y-8 animate-fade-in">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
+        <div>
+          <h2 class="text-3xl font-extrabold text-white tracking-tight">Mural da Comunidade</h2>
+          <p class="text-slate-400 mt-1">Partilha as tuas ideias e conecta-te com outros jogadores.</p>
+        </div>
       </div>
 
       <!-- Criar Novo Tópico -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
-        <h3 class="font-bold mb-3 text-lg">Criar Novo Tópico</h3>
-        <input type="text" id="topic-title" placeholder="Título (ex: Ideias para o nível 1)" class="w-full border border-gray-300 rounded-lg p-2 mb-3">
-        <textarea id="topic-content" placeholder="Escreve aqui a tua mensagem..." rows="3" class="w-full border border-gray-300 rounded-lg p-2 mb-3"></textarea>
-        <button onclick="createTopic()" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 font-medium transition">Publicar Tópico</button>
+      <div class="glass p-6 rounded-2xl shadow-xl">
+        <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+          <i data-lucide="message-square-plus" class="w-5 h-5 text-brand-400"></i> Iniciar um novo tópico
+        </h3>
+        <input type="text" id="topic-title" placeholder="Qual é o assunto? (ex: Ideias para o Boss Final)" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 mb-3 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-slate-600">
+        <textarea id="topic-content" placeholder="Escreve aqui os teus pensamentos..." rows="4" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-slate-600"></textarea>
+        <button onclick="createTopic()" id="btn-post" class="bg-gradient-to-r from-brand-600 to-purple-600 text-white px-6 py-2.5 rounded-xl hover:from-brand-500 hover:to-purple-500 font-semibold transition-all shadow-lg shadow-brand-500/25 flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i> Publicar Tópico
+        </button>
       </div>
 
       <!-- Lista de Tópicos -->
@@ -80,57 +152,76 @@
 
   </main>
 
-  <!-- RODAPÉ -->
-  <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
-    <div class="max-w-5xl mx-auto px-4 text-center text-sm text-gray-400">
-      &copy; 2026 O Meu Jogo. Todos os direitos reservados.
-    </div>
-  </footer>
-
   <script>
     lucide.createIcons();
 
-    // =========================================================
-    // CONFIGURAÇÃO DO SUPABASE (JÁ PREENCHIDA)
-    // =========================================================
+    // CONFIGURAÇÃO DO SUPABASE
     const SUPABASE_URL = 'https://pdwqkggpkwxmevthoyvm.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkd3FrZ2dwa3d4bWV2dGhveXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NjAsImV4cCI6MjEwOTA5NDg2MH0.K0Il6pXv3xewGpe0_TInh-YIm411cE1DgZhMECYMfAk';
-    // =========================================================
 
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // --- Funções Auxiliares de UI ---
+    function showMessage(text, type = 'error') {
+      const container = document.getElementById('auth-message-container');
+      const msg = document.getElementById('auth-message');
+      const icon = document.getElementById('auth-icon');
+      
+      container.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20', 'bg-green-500/10', 'text-green-400', 'border-green-500/20', 'border');
+      container.classList.add('border');
+      
+      if (type === 'error') {
+        container.classList.add('bg-red-500/10', 'text-red-400', 'border-red-500/20');
+        icon.setAttribute('data-lucide', 'alert-circle');
+      } else {
+        container.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
+        icon.setAttribute('data-lucide', 'check-circle');
+      }
+      
+      msg.textContent = text;
+      lucide.createIcons(); // Recria o ícone novo
+    }
+
+    function setLoading(btnId, isLoading, originalText) {
+      const btn = document.getElementById(btnId);
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> A processar...`;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+      lucide.createIcons();
+    }
+
+    // --- Lógica de Autenticação ---
     async function signUp() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const msg = document.getElementById('auth-message');
       
+      if (password.length < 6) return showMessage('A password tem de ter pelo menos 6 caracteres.', 'error');
+      
+      setLoading('btn-signup', true);
       const { data, error } = await db.auth.signUp({ email, password });
+      setLoading('btn-signup', false, 'Criar Nova Conta');
       
-      if (error) { 
-        msg.textContent = error.message; 
-        msg.className = 'text-sm mt-2 text-center text-red-500';
-        return; 
-      }
+      if (error) return showMessage(error.message, 'error');
       
-      msg.textContent = 'Conta criada com sucesso!';
-      msg.className = 'text-sm mt-2 text-center text-green-600';
-      
-      if(data.session) { checkUser(); } 
+      showMessage('Conta criada com sucesso! A entrar...', 'success');
+      if(data.session) { setTimeout(checkUser, 1000); } 
     }
 
     async function signIn() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const msg = document.getElementById('auth-message');
       
+      setLoading('btn-login', true);
       const { error } = await db.auth.signInWithPassword({ email, password });
+      setLoading('btn-login', false, 'Entrar na Conta');
       
-      if (error) { 
-        msg.textContent = error.message; 
-        msg.className = 'text-sm mt-2 text-center text-red-500';
-        return; 
-      }
+      if (error) return showMessage('Email ou password incorretos.', 'error');
+      
       checkUser();
     }
 
@@ -139,6 +230,7 @@
       checkUser();
     }
 
+    // --- Alternar Vistas ---
     async function checkUser() {
       const { data: { session } } = await db.auth.getSession();
       
@@ -149,25 +241,42 @@
       if (session) {
         viewLanding.classList.add('hidden');
         viewForum.classList.remove('hidden');
-        navInfo.innerHTML = `<span>Olá, <b>${session.user.email.split('@')[0]}</b></span>`;
+        viewForum.classList.add('flex', 'flex-col');
+        
+        // Menu do utilizador na barra de topo
+        navInfo.innerHTML = `
+          <div class="flex items-center gap-3 bg-slate-800/50 py-1.5 px-3 rounded-full border border-slate-700">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-brand-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs uppercase shadow-inner">
+              ${session.user.email.substring(0, 2)}
+            </div>
+            <span class="hidden sm:block">${session.user.email.split('@')[0]}</span>
+            <button onclick="signOut()" class="text-slate-400 hover:text-red-400 transition-colors ml-2" title="Sair">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
         loadTopics();
       } else {
         viewLanding.classList.remove('hidden');
         viewForum.classList.add('hidden');
+        viewForum.classList.remove('flex', 'flex-col');
         navInfo.innerHTML = '';
-        document.getElementById('auth-message').textContent = '';
+        document.getElementById('auth-message-container').classList.add('hidden');
       }
     }
 
     checkUser();
 
+    // --- Lógica do Fórum ---
     async function createTopic() {
       const title = document.getElementById('topic-title').value;
       const content = document.getElementById('topic-content').value;
       
-      if (!title || !content) return alert('Preenche o título e o conteúdo!');
+      if (!title || !content) return alert('Preenche o título e o conteúdo antes de publicar!');
 
       const { data: { user } } = await db.auth.getUser();
+      setLoading('btn-post', true);
       
       const { error } = await db.from('topics').insert({
         title: title,
@@ -176,6 +285,8 @@
         user_id: user.id
       });
 
+      setLoading('btn-post', false, '<i data-lucide="send" class="w-4 h-4"></i> Publicar Tópico');
+      
       if (error) { 
         alert('Erro ao publicar: ' + error.message); 
         return; 
@@ -198,17 +309,34 @@
       list.innerHTML = '';
       
       if (data.length === 0) {
-        list.innerHTML = '<p class="text-gray-500 text-center py-4 bg-white rounded-xl border">Ainda não há tópicos. Sê o primeiro a falar!</p>';
+        list.innerHTML = `
+          <div class="text-center py-12 bg-slate-800/30 rounded-2xl border border-slate-700/50 border-dashed">
+            <i data-lucide="ghost" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+            <p class="text-slate-400">Ainda não há tópicos. Sê o primeiro a falar!</p>
+          </div>`;
+        lucide.createIcons();
         return;
       }
 
       data.forEach(topic => {
-        const date = new Date(topic.created_at).toLocaleDateString('pt-PT');
+        const date = new Date(topic.created_at).toLocaleDateString('pt-PT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const initial = topic.author_name.substring(0, 2).toUpperCase();
+        
         list.innerHTML += `
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-            <h3 class="font-bold text-lg text-gray-900">${topic.title}</h3>
-            <p class="text-xs text-gray-400 mb-3">Por ${topic.author_name} em ${date}</p>
-            <p class="text-gray-700">${topic.content}</p>
+          <div class="glass p-6 rounded-2xl hover:border-brand-500/30 transition-colors group">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 font-bold shrink-0">
+                ${initial}
+              </div>
+              <div class="flex-grow">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-bold text-lg text-white group-hover:text-brand-400 transition-colors">${topic.title}</h3>
+                  <span class="text-xs text-slate-500 whitespace-nowrap ml-4">${date}</span>
+                </div>
+                <p class="text-sm text-brand-400/80 mb-3">@${topic.author_name.split('@')[0]}</p>
+                <p class="text-slate-300 leading-relaxed text-sm">${topic.content}</p>
+              </div>
+            </div>
           </div>
         `;
       });
