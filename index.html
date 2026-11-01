@@ -16,7 +16,7 @@
         extend: {
           fontFamily: { sans: ['Inter', 'sans-serif'] },
           colors: {
-            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } // Um roxo/azul moderno
+            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
           }
         }
       }
@@ -24,18 +24,20 @@
   </script>
   <style> 
     body { font-family: 'Inter', sans-serif; }
-    /* Efeito de vidro para os cartões */
     .glass {
       background: rgba(30, 41, 59, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
+    /* Animação suave para trocar de formulário */
+    .form-section { display: none; animation: fadeIn 0.3s ease-in-out; }
+    .form-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-200 antialiased flex flex-col min-h-screen selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
 
-  <!-- Luzes de fundo decorativas -->
   <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 pointer-events-none"></div>
   <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
 
@@ -61,7 +63,7 @@
     <div id="view-landing" class="grid md:grid-cols-2 gap-12 items-center py-10">
       
       <!-- Texto à Esquerda -->
-      <div class="space-y-6 text-center md:text-left">
+      <div class="space-y-6 text-center md:text-left hidden md:block">
         <span class="inline-block py-1 px-3 rounded-full bg-brand-500/10 text-brand-400 text-sm font-semibold border border-brand-500/20">
           Bem-vindo à Comunidade
         </span>
@@ -71,62 +73,107 @@
         <p class="text-lg text-slate-400 leading-relaxed max-w-lg mx-auto md:mx-0">
           Junta-te a outros jogadores para partilhar teorias, sugerir novas funcionalidades e acompanhar o desenvolvimento em tempo real.
         </p>
-        <div class="flex items-center justify-center md:justify-start gap-4 pt-2 text-sm text-slate-500">
-          <div class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-400"></i> Discussões ativas</div>
-          <div class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-400"></i> Acesso rápido</div>
-        </div>
       </div>
 
-      <!-- Caixa de Login à Direita -->
-      <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md mx-auto">
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-white mb-2">Acede à tua conta</h2>
-          <p class="text-sm text-slate-400">Usa o teu email e password para entrar ou criar uma nova conta.</p>
+      <!-- Caixa de Autenticação (Login / Registo) -->
+      <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md mx-auto relative overflow-hidden">
+        
+        <!-- ================= FORMULÁRIO DE LOGIN ================= -->
+        <div id="section-login" class="form-section active">
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold text-white mb-2">Bem-vindo de volta</h2>
+            <p class="text-sm text-slate-400">Insere os teus dados para entrares na comunidade.</p>
+          </div>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Endereço de Email</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="mail" class="w-5 h-5 text-slate-500"></i>
+                </div>
+                <input type="email" id="login-email" required placeholder="tu@exemplo.com" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="lock" class="w-5 h-5 text-slate-500"></i>
+                </div>
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+              </div>
+            </div>
+
+            <div id="login-message" class="hidden rounded-lg p-3 text-sm flex items-start gap-2 border"></div>
+
+            <button type="button" onclick="signIn()" id="btn-login" class="w-full bg-brand-600 text-white px-4 py-3 rounded-xl hover:bg-brand-500 font-semibold transition-all shadow-lg shadow-brand-500/25 flex justify-center items-center gap-2 mt-2">
+              Entrar
+            </button>
+          </div>
+
+          <div class="mt-6 text-center">
+            <p class="text-sm text-slate-400">Ainda não tens conta? 
+              <button onclick="toggleForm('signup')" class="text-brand-400 font-semibold hover:text-brand-300 transition-colors">Criar conta</button>
+            </p>
+          </div>
         </div>
 
-        <form id="auth-form" class="space-y-5">
-          <div>
-            <label class="block text-sm font-medium text-slate-300 mb-1.5">Endereço de Email</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i data-lucide="mail" class="w-5 h-5 text-slate-500"></i>
-              </div>
-              <input type="email" id="email" required placeholder="tu@exemplo.com" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
-            </div>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i data-lucide="lock" class="w-5 h-5 text-slate-500"></i>
-              </div>
-              <input type="password" id="password" required placeholder="••••••••" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
-            </div>
-            <p class="text-xs text-slate-500 mt-2">Mínimo de 6 caracteres.</p>
+        <!-- ================= FORMULÁRIO DE REGISTO ================= -->
+        <div id="section-signup" class="form-section">
+          <div class="mb-6">
+            <button onclick="toggleForm('login')" class="text-slate-400 hover:text-white flex items-center gap-1 text-sm mb-4 transition-colors">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar ao login
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-2">Cria a tua conta</h2>
+            <p class="text-sm text-slate-400">Junta-te à discussão em menos de um minuto.</p>
           </div>
 
-          <!-- Mensagens de Erro/Sucesso -->
-          <div id="auth-message-container" class="hidden rounded-lg p-3 text-sm flex items-start gap-2">
-            <i id="auth-icon" class="w-5 h-5 shrink-0 mt-0.5"></i>
-            <span id="auth-message"></span>
-          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Nome de Utilizador</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="user" class="w-5 h-5 text-slate-500"></i>
+                </div>
+                <input type="text" id="signup-name" required placeholder="Ex: GamerPro123" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+              </div>
+            </div>
 
-          <div class="flex flex-col gap-3 pt-2">
-            <button type="button" onclick="signIn()" id="btn-login" class="w-full bg-brand-600 text-white px-4 py-3 rounded-xl hover:bg-brand-500 font-semibold transition-all shadow-lg shadow-brand-500/25 flex justify-center items-center gap-2">
-              Entrar na Conta
-            </button>
-            <button type="button" onclick="signUp()" id="btn-signup" class="w-full bg-slate-800 text-slate-300 border border-slate-700 px-4 py-3 rounded-xl hover:bg-slate-700 hover:text-white font-medium transition-all flex justify-center items-center gap-2">
-              Criar Nova Conta
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Endereço de Email</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="mail" class="w-5 h-5 text-slate-500"></i>
+                </div>
+                <input type="email" id="signup-email" required placeholder="tu@exemplo.com" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="lock" class="w-5 h-5 text-slate-500"></i>
+                </div>
+                <input type="password" id="signup-password" required placeholder="Mínimo 6 caracteres" class="w-full bg-slate-900/50 border border-slate-700 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all placeholder:text-slate-600">
+              </div>
+            </div>
+
+            <div id="signup-message" class="hidden rounded-lg p-3 text-sm flex items-start gap-2 border"></div>
+
+            <button type="button" onclick="signUp()" id="btn-signup" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl hover:bg-green-500 font-semibold transition-all shadow-lg shadow-green-500/25 flex justify-center items-center gap-2 mt-2">
+              Criar a minha conta
             </button>
           </div>
-        </form>
+        </div>
+
       </div>
     </div>
 
     <!-- VISTA 2: FÓRUM (Logado) -->
     <div id="view-forum" class="hidden space-y-8 animate-fade-in">
-      
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-6">
         <div>
           <h2 class="text-3xl font-extrabold text-white tracking-tight">Mural da Comunidade</h2>
@@ -155,32 +202,39 @@
   <script>
     lucide.createIcons();
 
-    // CONFIGURAÇÃO DO SUPABASE
     const SUPABASE_URL = 'https://pdwqkggpkwxmevthoyvm.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkd3FrZ2dwa3d4bWV2dGhveXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NjAsImV4cCI6MjEwOTA5NDg2MH0.K0Il6pXv3xewGpe0_TInh-YIm411cE1DgZhMECYMfAk';
 
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // --- Funções Auxiliares de UI ---
-    function showMessage(text, type = 'error') {
-      const container = document.getElementById('auth-message-container');
-      const msg = document.getElementById('auth-message');
-      const icon = document.getElementById('auth-icon');
+    // --- UI: Alternar entre Login e Registo ---
+    function toggleForm(section) {
+      document.getElementById('section-login').classList.remove('active');
+      document.getElementById('section-signup').classList.remove('active');
       
-      container.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20', 'bg-green-500/10', 'text-green-400', 'border-green-500/20', 'border');
-      container.classList.add('border');
-      
-      if (type === 'error') {
-        container.classList.add('bg-red-500/10', 'text-red-400', 'border-red-500/20');
-        icon.setAttribute('data-lucide', 'alert-circle');
+      if(section === 'login') {
+        document.getElementById('section-login').classList.add('active');
       } else {
-        container.classList.add('bg-green-500/10', 'text-green-400', 'border-green-500/20');
-        icon.setAttribute('data-lucide', 'check-circle');
+        document.getElementById('section-signup').classList.add('active');
       }
       
-      msg.textContent = text;
-      lucide.createIcons(); // Recria o ícone novo
+      // Limpar mensagens antigas
+      document.getElementById('login-message').classList.add('hidden');
+      document.getElementById('signup-message').classList.add('hidden');
+    }
+
+    function showMessage(elementId, text, type = 'error') {
+      const container = document.getElementById(elementId);
+      container.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20', 'bg-green-500/10', 'text-green-400', 'border-green-500/20');
+      
+      if (type === 'error') {
+        container.className = 'rounded-lg p-3 text-sm flex items-start gap-2 border bg-red-500/10 text-red-400 border-red-500/20';
+      } else {
+        container.className = 'rounded-lg p-3 text-sm flex items-start gap-2 border bg-green-500/10 text-green-400 border-green-500/20';
+      }
+      container.innerHTML = text;
+      container.classList.remove('hidden');
     }
 
     function setLoading(btnId, isLoading, originalText) {
@@ -195,34 +249,40 @@
       lucide.createIcons();
     }
 
-    // --- Lógica de Autenticação ---
-    async function signUp() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      if (password.length < 6) return showMessage('A password tem de ter pelo menos 6 caracteres.', 'error');
-      
-      setLoading('btn-signup', true);
-      const { data, error } = await db.auth.signUp({ email, password });
-      setLoading('btn-signup', false, 'Criar Nova Conta');
-      
-      if (error) return showMessage(error.message, 'error');
-      
-      showMessage('Conta criada com sucesso! A entrar...', 'success');
-      if(data.session) { setTimeout(checkUser, 1000); } 
-    }
-
+    // --- Autenticação ---
     async function signIn() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       
       setLoading('btn-login', true);
       const { error } = await db.auth.signInWithPassword({ email, password });
-      setLoading('btn-login', false, 'Entrar na Conta');
+      setLoading('btn-login', false, 'Entrar');
       
-      if (error) return showMessage('Email ou password incorretos.', 'error');
-      
+      if (error) return showMessage('login-message', 'Email ou password incorretos.', 'error');
       checkUser();
+    }
+
+    async function signUp() {
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      
+      if (!name) return showMessage('signup-message', 'Tens de escolher um nome de utilizador.', 'error');
+      if (password.length < 6) return showMessage('signup-message', 'A password tem de ter pelo menos 6 caracteres.', 'error');
+      
+      setLoading('btn-signup', true);
+      // Aqui guardamos o "name" nos metadados do utilizador no Supabase
+      const { data, error } = await db.auth.signUp({ 
+        email, 
+        password,
+        options: { data: { display_name: name } } 
+      });
+      setLoading('btn-signup', false, 'Criar a minha conta');
+      
+      if (error) return showMessage('signup-message', error.message, 'error');
+      
+      showMessage('signup-message', 'Conta criada! A entrar...', 'success');
+      if(data.session) { setTimeout(checkUser, 1000); } 
     }
 
     async function signOut() {
@@ -230,7 +290,7 @@
       checkUser();
     }
 
-    // --- Alternar Vistas ---
+    // --- Vistas e Fórum ---
     async function checkUser() {
       const { data: { session } } = await db.auth.getSession();
       
@@ -243,32 +303,33 @@
         viewForum.classList.remove('hidden');
         viewForum.classList.add('flex', 'flex-col');
         
-        // Menu do utilizador na barra de topo
+        // Vai buscar o nome de utilizador que guardámos, senão usa o início do email
+        let displayName = session.user.user_metadata?.display_name || session.user.email.split('@')[0];
+        let initial = displayName.substring(0, 2).toUpperCase();
+
         navInfo.innerHTML = `
           <div class="flex items-center gap-3 bg-slate-800/50 py-1.5 px-3 rounded-full border border-slate-700">
             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-brand-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs uppercase shadow-inner">
-              ${session.user.email.substring(0, 2)}
+              ${initial}
             </div>
-            <span class="hidden sm:block">${session.user.email.split('@')[0]}</span>
+            <span class="hidden sm:block text-white font-semibold">${displayName}</span>
             <button onclick="signOut()" class="text-slate-400 hover:text-red-400 transition-colors ml-2" title="Sair">
               <i data-lucide="log-out" class="w-4 h-4"></i>
             </button>
           </div>
         `;
         lucide.createIcons();
-        loadTopics();
+        loadTopics(displayName);
       } else {
         viewLanding.classList.remove('hidden');
         viewForum.classList.add('hidden');
         viewForum.classList.remove('flex', 'flex-col');
         navInfo.innerHTML = '';
-        document.getElementById('auth-message-container').classList.add('hidden');
       }
     }
 
     checkUser();
 
-    // --- Lógica do Fórum ---
     async function createTopic() {
       const title = document.getElementById('topic-title').value;
       const content = document.getElementById('topic-content').value;
@@ -276,21 +337,19 @@
       if (!title || !content) return alert('Preenche o título e o conteúdo antes de publicar!');
 
       const { data: { user } } = await db.auth.getUser();
-      setLoading('btn-post', true);
+      let displayName = user.user_metadata?.display_name || user.email.split('@')[0];
       
+      setLoading('btn-post', true);
       const { error } = await db.from('topics').insert({
         title: title,
         content: content,
-        author_name: user.email,
+        author_name: displayName, // Guarda o nome bonito e não o email
         user_id: user.id
       });
 
       setLoading('btn-post', false, '<i data-lucide="send" class="w-4 h-4"></i> Publicar Tópico');
       
-      if (error) { 
-        alert('Erro ao publicar: ' + error.message); 
-        return; 
-      }
+      if (error) return alert('Erro ao publicar: ' + error.message);
       
       document.getElementById('topic-title').value = '';
       document.getElementById('topic-content').value = '';
@@ -333,7 +392,7 @@
                   <h3 class="font-bold text-lg text-white group-hover:text-brand-400 transition-colors">${topic.title}</h3>
                   <span class="text-xs text-slate-500 whitespace-nowrap ml-4">${date}</span>
                 </div>
-                <p class="text-sm text-brand-400/80 mb-3">@${topic.author_name.split('@')[0]}</p>
+                <p class="text-sm text-brand-400/80 mb-3">@${topic.author_name}</p>
                 <p class="text-slate-300 leading-relaxed text-sm">${topic.content}</p>
               </div>
             </div>
